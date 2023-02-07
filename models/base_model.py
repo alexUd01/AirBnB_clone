@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """A module that contains the base class `BaseModel` of all other models.
+
 It contains common elements:
     attributes: `id`, `created_at` and `updated_at`
     methods: `save()` and `to_json()`
