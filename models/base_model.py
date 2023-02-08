@@ -5,7 +5,7 @@ It contains common elements:
     attributes: `id`, `created_at` and `updated_at`
     methods: `save()` and `to_json()`
 
-All other classes that would be created will inherit from is base module.
+All other classes that would be created will inherit from this base module.
 """
 import uuid
 from datetime import datetime
