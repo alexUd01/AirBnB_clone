@@ -103,8 +103,7 @@ class HBNBCommand(cmd.Cmd):
         self.all_objects = storage.all()
 
         for key in self.all_objects.keys():
-            tmp_list = key.split('.')
-            if args[1] == tmp_list[1]:
+            if key == args[0] + '.' + args[1]:
                 print(self.all_objects[key])  # Print the attributes
                 return
 
@@ -133,10 +132,13 @@ class HBNBCommand(cmd.Cmd):
 
         # Delete object
         try:
+            # `__del__` automatically writes changes to file.json
             storage.__del__(args[0], args[1])
         except AttributeError:
             print("** no instance found **")
-        self.all_objects = storage.all()
+        else:
+            # Update current dictionary
+            self.all_objects = storage.all()
 
 
         
