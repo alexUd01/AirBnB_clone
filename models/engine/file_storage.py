@@ -119,7 +119,6 @@ class FileStorage():
 
         return new_dict
 
-
     def __del__(self, class_name=None, obj_id=None):
         """A function that deletes an instance based on its
         class name and id
@@ -134,5 +133,6 @@ class FileStorage():
                 self.save()
                 return
 
-        raise AttributeError("'{}' has no instance with id '{}'".format(class_name,
-                                                                        obj_id))
+        raise AttributeError(
+            "'{}' has no instance with id '{}'".format(class_name,
+                                                       obj_id))

@@ -118,6 +118,7 @@ class HBNBCommand(cmd.Cmd):
                 ** no instance found **
                 $ destroy BaseModel 1234-1234-1234.
                 ** no instance found **
+        Same rule applies as it was in do_create() and do_show().
         """
         args = line.split()
         if len(args) == 0:
@@ -140,8 +141,49 @@ class HBNBCommand(cmd.Cmd):
             # Update current dictionary
             self.all_objects = storage.all()
 
+    def do_all(self, line):
+        """Prints all string representation of all instances based
+        or not on the class name.
+            Ex: $ all BaseModel
+                <some data about BaseModel is printed>
+                $ all.
+                <some data about BaseModel is printed>
 
+        The printed result must be a list of strings (like the
+        example below). If the class name doesn't exist, print
+        ** class doesn't exist **
+            Ex: $ all MyModel
+                ** class doesn't exist **
+        """
+        args = line.split()
+
+        # retrieve data from file.json
+        self.all_objects = storage.all()
         
+        if len(args) == 0:  # only `all` was entered
+            for key in self.all_objects.keys():
+                print(self.all_objects[key])
+        elif len(args) >= 1:
+            # I used for loop to iterate through the args because,
+            # in the future, I want it to process not only args[0]
+            # but others passed.
+            for arg in args:
+                type(self).print_class_objects(self, arg)
+                break
+
+    @staticmethod
+    def print_class_objects(self, cls_name):
+        """A helper method that prints all available class objects
+        """
+        current_classes = ["BaseModel", "User"]
+
+        if cls_name not in current_classes:
+            print("** class doesn't exist **")
+            return
+
+        for key in self.all_objects.keys():
+            if key.startswith(cls_name + '.'):
+                print(self.all_objects[key])
 
 
 if __name__ == '__main__':
