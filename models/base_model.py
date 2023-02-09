@@ -24,7 +24,8 @@ class BaseModel():
             for key, val in kwargs.items():
                 if key != "__class__":
                     # convert date string value to datetime object
-                    if key in ["created_at", "updated_at"]:
+                    if key in ["created_at", "updated_at"] and \
+                       type(kwargs[key]) is not datetime:
                         val = datetime.strptime(val, "%Y-%m-%dT%H:%M:%S.%f")
                     setattr(self, key, val)
         else:  # kwargs is empty

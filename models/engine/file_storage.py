@@ -63,7 +63,7 @@ class FileStorage():
 
         if len(new_dict) != 0:  # __objects isn't empty
             for key in new_dict.keys():
-                new_dict[key] = type(self).__to_dict(new_dict[key])
+                new_dict[key] = type(self).to_dict(new_dict[key])
                 tmp_list = key.split(sep='.')
                 new_dict[key]["__class__"] = tmp_list[0]
 
@@ -86,12 +86,12 @@ class FileStorage():
         else:
             new_dict = dict()
             for key in temp.keys():
-                new_dict[key] = type(self).__from_dict(temp[key])
+                new_dict[key] = type(self).from_dict(temp[key])
 
             type(self).__objects = new_dict
 
     @staticmethod
-    def __to_dict(obj):
+    def to_dict(obj):
         """Serializes datetime objects to JSON
         """
         new_dict = obj.copy()
@@ -104,7 +104,7 @@ class FileStorage():
         return new_dict
 
     @staticmethod
-    def __from_dict(obj):
+    def from_dict(obj):
         """Deserializes JSON object to datetime object
         """
         new_dict = obj.copy()
@@ -118,3 +118,21 @@ class FileStorage():
             del new_dict["__class__"]
 
         return new_dict
+
+
+    def __del__(self, class_name=None, obj_id=None):
+        """A function that deletes an instance based on its
+        class name and id
+        """
+        # check for empty class name
+        if None in [class_name, obj_id]:
+            return
+
+        for key in type(self).__objects.keys():
+            if class_name + '.' + obj_id == key:
+                del type(self).__objects[key]
+                self.save()
+                return
+
+        raise AttributeError("'{}' has no instance with id '{}'".format(class_name,
+                                                                        obj_id))
