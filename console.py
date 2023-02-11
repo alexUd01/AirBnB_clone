@@ -66,7 +66,6 @@ class HBNBCommand(cmd.Cmd):
         self.new_base_model.save()
         print(self.new_base_model.id)
 
-
     def do_show(self, line):
         """Prints the string representation of an instance based on
         the class name and id.
@@ -165,7 +164,7 @@ class HBNBCommand(cmd.Cmd):
 
         # retrieve data from file.json
         self.all_objects = storage.all()
-        
+
         if len(args) == 0:  # only `all` was entered
             for key in self.all_objects.keys():
                 print(self.all_objects[key])
@@ -234,7 +233,7 @@ email "aibnb@mail.com")
 
         id, created_at and updated_at can't be updated. You can assume
         they won't be passed in the update command.
-        
+
         Only "simple" arguments can be updated: string, integer and
         float.
         You can assume nobody will try to update list of ids or datetime

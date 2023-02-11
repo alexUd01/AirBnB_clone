@@ -20,7 +20,8 @@ class TestBaseModelDocs(unittest.TestCase):
 
     def test_pep8_conformance(self):
         """Test that models/base_model.py conforms to PEP8"""
-        for path in ['models/base_model.py', 'tests/test_models/test_base_model.py']:
+        for path in ['models/base_model.py',
+                     'tests/test_models/test_base_model.py']:
             with self.subTest(path=path):
                 errors = pycodestyle.Checker(path).check_all()
                 self.assertEqual(errors, 0)
@@ -42,9 +43,11 @@ class TestBaseModelDocs(unittest.TestCase):
         for func in self.base_funcs:
             with self.subTest(function=func):
                 self.assertIsNot(
-                    func[1].__doc__, None, "{:s} method needs a docstring".format(func[0]))
+                    func[1].__doc__, None,
+                    "{:s} method needs a docstring".format(func[0]))
                 self.assertTrue(
-                    len(func[1].__doc__) > 1, "{:s} method needs a docstring".format(func[0]))
+                    len(func[1].__doc__) > 1,
+                    "{:s} method needs a docstring".format(func[0]))
 
 
 class TestBaseModel(unittest.TestCase):
