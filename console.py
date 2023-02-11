@@ -185,6 +185,88 @@ class HBNBCommand(cmd.Cmd):
             if key.startswith(cls_name + '.'):
                 print(self.all_objects[key])
 
+    def do_update(self, line):
+        """Updates an instance based on the class name and id
+        by adding or updating attribute (save the change into
+        the JSON file).
+            Ex: $ update BaseModel 1234-1234-1234 email "aibnb@mail.com".
+
+        Usage:
+            update <class name> <id> <attribute name> "<attribute value>"
+
+        - Only one attribute can be updated at the time
+        - You can assume the attribute name is valid (exists for
+          this model)
+        - The attribute value must be casted to the attribute type
+        - If the class name is missing, print ** class name missing **
+            Ex: $ update
+
+        If the class name doesn't exist, print ** class doesn't exist **
+            Ex: $ update MyModel
+
+        If the id is missing, print ** instance id missing **
+            Ex: $ update BaseModel
+
+        If the instance of the class name doesn't exist for the
+        id, print ** no instance found **
+            Ex: $ update BaseModel 121212
+
+        If the attribute name is missing, print ** attribute name missing **
+            Ex: $ update BaseModel existing-id
+
+        If the value for the attribute name doesn't exist,
+        print ** value missing **
+            Ex: $ update BaseModel existing-id first_name
+
+        All other arguments should not be used
+            Ex: $ update BaseModel 1234-1234-1234 email "aibnb@mail.com" \
+first_name "Betty" = $ update BaseModel 1234-1234-1234 \
+email "aibnb@mail.com")
+
+        id, created_at and updated_at can't be updated. You can assume
+        they won't be passed in the update command.
+        
+        Only "simple" arguments can be updated: string, integer and
+        float.
+        You can assume nobody will try to update list of ids or datetime
+        """
+        args = line.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        if args[0] not in ["BaseModel"]:
+            print("** class doesn't exist **")
+            return
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+        if storage.validate_id(args[0], args[1]) is False:
+            print("** no instance found **")
+            return
+        if len(args) < 3:
+            print("** attribute name missing **")
+        if len(args) < 4:
+            print("** value missing **")
+
+        # group quoted values
+        val = ""
+        if args[3].startswith('"'):
+            for arg in args[3:]:
+                val = val + ' ' + arg
+                if arg.endswith('"'):
+                    break
+        # If the last arg has no closing quote, then val = args[3] only
+        if not val.endswith('"'):
+            val = arg[3]
+        else:
+            val = val.strip(' ')
+            val = val.strip('"')
+
+        print(val)
+        # Update object
+        storage.update(args[2], val, args[0], args[1])
+        storage.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

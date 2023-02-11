@@ -128,7 +128,7 @@ class FileStorage():
             return
 
         for key in type(self).__objects.keys():
-            if class_name + '.' + obj_id == key:
+            if key == class_name + '.' + obj_id:
                 del type(self).__objects[key]
                 self.save()
                 return
@@ -136,3 +136,20 @@ class FileStorage():
         raise AttributeError(
             "'{}' has no instance with id '{}'".format(class_name,
                                                        obj_id))
+
+    def validate_id(self, class_name, obj_id):
+        """Check if a valid object id was provided"""
+        if class_name + '.' + obj_id not in type(self).__objects.keys():
+            return False
+        return True
+
+    def update(self, attr, val, class_name, obj_id):
+        """A function that updates an instance based on its class
+        name and id
+        """
+        for key in type(self).__objects.keys():
+            if key == class_name + '.' + obj_id:
+                type(self).__objects[key][attr] = val
+                type(self).__objects[key]['updated_at'] = datetime.now()
+                self.save()
+                self.reload()
