@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""A module that contains a class User that inherits from BaseModel
+"""A module that contains a class `User` that inherits from BaseModel
 
 Public class attributes:
     email (string) - empty string
@@ -21,4 +21,5 @@ class User(BaseModel):
     last_name = ''
 
     def __init__(self):
+        """Initialization is passed to BaseModel."""
         super().__init__(self)
