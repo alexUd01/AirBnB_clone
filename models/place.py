@@ -12,7 +12,8 @@ Public class attribute:
     price_by_night: integer - 0
     latitude: float - 0.0
     longitude: float - 0.0
-    amenity_ids: list of string - empty list: it will be the list of Amenity.id later
+    amenity_ids: list of string - empty list: it will be the list of
+                 Amenity.id later
 """
 from models.base_model import BaseModel
 from models.__init__ import storage
