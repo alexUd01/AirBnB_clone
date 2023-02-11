@@ -10,6 +10,7 @@ import cmd
 import sys
 from models.base_model import BaseModel
 from models.base_model import storage
+from models.user import User
 
 
 # Task 6: Console 0.0.1
@@ -52,14 +53,19 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] != "BaseModel":
+
+        # Create BaseModule or User Object
+        if args[0] == "BaseModel":
+            self.new_base_model = BaseModel()
+        elif args[0] == "User":
+            self.new_base_model = User()
+        else:
             print("** class doesn't exist **")
             return
 
-        # Create BaseModule Object
-        self.new_base_model = BaseModel()
         self.new_base_model.save()
         print(self.new_base_model.id)
+
 
     def do_show(self, line):
         """Prints the string representation of an instance based on
@@ -92,7 +98,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] != "BaseModel":
+        if args[0] not in ["BaseModel", "User"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -124,7 +130,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] != "BaseModel":
+        if args[0] not in ["BaseModel", "User"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -133,12 +139,12 @@ class HBNBCommand(cmd.Cmd):
 
         # Delete object
         try:
-            # `__del__` automatically writes changes to file.json
-            storage.__del__(args[0], args[1])
+            # `storage.destroy()` automatically writes changes to file.json
+            storage.destroy(args[0], args[1])
         except AttributeError:
             print("** no instance found **")
         else:
-            # Update current dictionary
+            # Refresh current dictionary
             self.all_objects = storage.all()
 
     def do_all(self, line):
@@ -163,7 +169,10 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:  # only `all` was entered
             for key in self.all_objects.keys():
                 print(self.all_objects[key])
-        elif len(args) >= 1:
+            return
+
+        # NOTE: If checker fails, make all universal
+        if len(args) >= 1:
             # I used for loop to iterate through the args because,
             # in the future, I want it to process not only args[0]
             # but others passed.
@@ -234,7 +243,7 @@ email "aibnb@mail.com")
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] not in ["BaseModel"]:
+        if args[0] not in ["BaseModel", "User"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -257,12 +266,11 @@ email "aibnb@mail.com")
                     break
         # If the last arg has no closing quote, then val = args[3] only
         if not val.endswith('"'):
-            val = arg[3]
+            val = args[3]
         else:
             val = val.strip(' ')
             val = val.strip('"')
 
-        print(val)
         # Update object
         storage.update(args[2], val, args[0], args[1])
         storage.save()

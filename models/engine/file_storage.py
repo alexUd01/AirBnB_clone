@@ -21,6 +21,9 @@ class FileStorage():
     # the key will be BaseModel.12121212)
     __objects = dict()
 
+    def __init__(self):
+        pass
+
     def all(self):
         """Returns the dictionary __objects
         """
@@ -119,14 +122,10 @@ class FileStorage():
 
         return new_dict
 
-    def __del__(self, class_name=None, obj_id=None):
+    def destroy(self, class_name, obj_id):
         """A function that deletes an instance based on its
         class name and id
         """
-        # check for empty class name
-        if None in [class_name, obj_id]:
-            return
-
         for key in type(self).__objects.keys():
             if key == class_name + '.' + obj_id:
                 del type(self).__objects[key]
@@ -152,4 +151,3 @@ class FileStorage():
                 type(self).__objects[key][attr] = val
                 type(self).__objects[key]['updated_at'] = datetime.now()
                 self.save()
-                self.reload()
