@@ -11,6 +11,11 @@ import sys
 from models.base_model import BaseModel
 from models.base_model import storage
 from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
 
 # Task 6: Console 0.0.1
@@ -54,11 +59,27 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
 
-        # Create BaseModule or User Object
+        # --> Create Instances
         if args[0] == "BaseModel":
             self.new_base_model = BaseModel()
+        # Create a User instance
         elif args[0] == "User":
             self.new_base_model = User()
+        # Create a Place instance
+        elif args[0] == "Place":
+            self.new_base_model = Place()
+        # Create a State instance
+        elif args[0] == "State":
+            self.new_base_model = State()
+        # Create a City instance
+        elif args[0] == "City":
+            self.new_base_model = City()
+        # Create an Amenity instance
+        elif args[0] == "Amenity":
+            self.new_base_model = Amenity()
+        # Create a Review instance
+        elif args[0] == "Review":
+            self.new_base_model = Review()
         else:
             print("** class doesn't exist **")
             return
@@ -97,7 +118,8 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] not in ["BaseModel", "User"]:
+        if args[0] not in ["BaseModel", "User", "Place", "State",
+                           "City", "Amenity", "Review"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -129,7 +151,8 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] not in ["BaseModel", "User"]:
+        if args[0] not in ["BaseModel", "User", "Place", "State",
+                           "City", "Amenity", "Review"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -183,7 +206,8 @@ class HBNBCommand(cmd.Cmd):
     def print_class_objects(self, cls_name):
         """A helper method that prints all available class objects
         """
-        current_classes = ["BaseModel", "User"]
+        current_classes = ["BaseModel", "User", "Place", "State",
+                           "City", "Amenity", "Review"]
 
         if cls_name not in current_classes:
             print("** class doesn't exist **")
@@ -242,7 +266,8 @@ email "aibnb@mail.com")
         if len(args) == 0:
             print("** class name missing **")
             return
-        if args[0] not in ["BaseModel", "User"]:
+        if args[0] not in ["BaseModel", "User", "Place", "State",
+                           "City", "Amenity", "Review"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -253,8 +278,10 @@ email "aibnb@mail.com")
             return
         if len(args) < 3:
             print("** attribute name missing **")
+            return
         if len(args) < 4:
             print("** value missing **")
+            return
 
         # group quoted values
         val = ""

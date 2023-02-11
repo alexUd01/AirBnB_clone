@@ -12,7 +12,7 @@ from models.__init__ import storage
 class Amenity(BaseModel):
     """A class Amenity that inherits from BaseModel
     """
-     name = ''
+    name = ''
 
     def __init__(self):
         """Initialization is passed to BaseModel."""
