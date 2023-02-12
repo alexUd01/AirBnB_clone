@@ -21,9 +21,6 @@ class FileStorage():
     # the key will be BaseModel.12121212)
     __objects = dict()
 
-    def __init__(self):
-        """Initializes some values that I haven't thought of"""
-        pass
 
     def all(self):
         """Returns the dictionary __objects
