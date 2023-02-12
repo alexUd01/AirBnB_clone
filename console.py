@@ -464,7 +464,7 @@ email "aibnb@mail.com")
                 if attr_val == -1000:
                     try:
                         attr_val = int(attr_val)
-                    except:
+                    except Exception:
                         super().default(line + "\nHi")
                         return
 
