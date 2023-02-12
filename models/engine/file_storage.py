@@ -145,7 +145,7 @@ class FileStorage():
 
     def update(self, attr, val, class_name, obj_id):
         """A function that updates an instance based on its class
-        name and id
+        name and  id
         """
         try:
             val = int(val)
