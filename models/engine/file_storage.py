@@ -147,6 +147,10 @@ class FileStorage():
         """A function that updates an instance based on its class
         name and id
         """
+        try:
+            val = int(val)
+        except Exception:
+            pass
         for key in type(self).__objects.keys():
             if key == class_name + '.' + obj_id:
                 type(self).__objects[key][attr] = val

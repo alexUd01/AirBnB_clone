@@ -297,7 +297,7 @@ email "aibnb@mail.com")
         if not val.endswith('"'):
             val = args[3]
         else:
-            val = val.strip(' ')
+            val = val.strip()
             val = val.strip('"')
 
         # Update object
@@ -385,6 +385,44 @@ email "aibnb@mail.com")
                 self.do_destroy(new_line)
 
         elif cmd_name.startswith("update("):
+            # Using **kwargs first
+            words = ''
+            try:
+                words = cmd_name[7:cmd_name.index(')')].strip()
+            except ValueError:
+                super().default(line)
+                return
+
+            # Get id number
+            first_comma_idx = words.index(',')
+            id_num = words[:first_comma_idx].strip()
+            id_num = self.__my_strip(id_num)
+            if id_num == -1000:
+                super().default(line)
+                return
+
+            # Get dictionary
+            attr_dict = words[first_comma_idx + 1:].strip()
+
+            if all([attr_dict.startswith('{'), attr_dict.endswith('}')]):
+                # call kwargs functions/handle kwargs
+                import json
+
+                # json doesn't like `'`. Therefore convert `'`to `"`.
+                attr_dict = attr_dict.replace("'", '"')
+                new_dict = json.loads(attr_dict)
+
+                for attr_name, attr_val in new_dict.items():
+                    new_line = class_name + ' ' + id_num + ' ' \
+                        + attr_name + ' ' + str(attr_val)
+                    self.do_update(new_line)
+                return
+
+            # If **kwargs works, this point will never be reached
+            # If control reaches this point, therefore kwargs
+            # wasn't used. Therefore *args will be used
+
+            # Using *args
             try:  # Read args up to ending bracket `)` not including it
                 words = cmd_name[7:cmd_name.index(')')]
 
@@ -406,7 +444,6 @@ email "aibnb@mail.com")
                                      third_comma_index].strip()
                 except ValueError:
                     attr_val = words[second_comma_index + 1:].strip()
-
             except ValueError as e:
                 super().default(line)
             else:
@@ -425,12 +462,15 @@ email "aibnb@mail.com")
                 # remove leading and trailling `"` or `'` from attr_val
                 attr_val = self.__my_strip(attr_val)
                 if attr_val == -1000:
-                    super().default(line)
-                    return
+                    try:
+                        attr_val = int(attr_val)
+                    except:
+                        super().default(line + "\nHi")
+                        return
 
                 # recreate a new string to be passed to `do_update`
                 new_line = class_name + ' ' + id_num + ' ' \
-                    + attr_name + ' ' + attr_val
+                    + attr_name + ' ' + str(attr_val)
                 self.do_update(new_line)
         else:
             super().default(line)
@@ -441,7 +481,7 @@ email "aibnb@mail.com")
         elif string.startswith("'") and string.endswith("'"):
             string = string.strip("'")
         else:
-            return -1000
+            return string
         return string
 
 
