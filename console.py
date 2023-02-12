@@ -332,9 +332,9 @@ email "aibnb@mail.com")
 
         lst = line.split('.')
         class_name = lst[0]
-        if len(lst) < 2:  # Check if only class_name was entered
-            super().default(line)  # Ex: (hbnb) User
-            return                 #     Unknown syntax: User
+        if len(lst) < 2:  # Check if only class_name was entered. Ex:
+            super().default(line)  # (hbnb) User
+            return                 # Unknown syntax: User
         cmd_name = lst[1]
 
         if class_name not in current_classes:
@@ -350,7 +350,7 @@ email "aibnb@mail.com")
                     print(x)
                     return
         if cmd_name.startswith("show("):
-            try:  #Read id_num up to ending bracket `)` not including it
+            try:  # Read id_num up to ending bracket `)` not including it
                 id_num = cmd_name[5:cmd_name.index(')')]
             except ValueError:
                 super().default(line)
@@ -369,7 +369,7 @@ email "aibnb@mail.com")
                 self.do_show(new_line)
 
         elif cmd_name.startswith("destroy("):
-            try:  #Read id_num up to ending bracket `)` not including it
+            try:  # Read id_num up to ending bracket `)` not including it
                 id_num = cmd_name[8:cmd_name.index(')')]
             except ValueError:
                 super().default(line)
@@ -385,7 +385,7 @@ email "aibnb@mail.com")
                 self.do_destroy(new_line)
 
         elif cmd_name.startswith("update("):
-            try:  #Read args up to ending bracket `)` not including it
+            try:  # Read args up to ending bracket `)` not including it
                 words = cmd_name[7:cmd_name.index(')')]
 
                 # Read id like '"asfadfadfadsadfad", without the `,`
@@ -400,7 +400,8 @@ email "aibnb@mail.com")
                 # Read attr_val starting after the second `,`
                 attr_val = ''
                 try:  # --> Incase more useless args were passed
-                    third_comma_index = words.index(',', second_comma_index + 1)
+                    third_comma_index = words.index(
+                        ',', second_comma_index + 1)
                     attr_val = words[second_comma_index + 1:
                                      third_comma_index].strip()
                 except ValueError:
@@ -442,7 +443,6 @@ email "aibnb@mail.com")
         else:
             return -1000
         return string
-            
 
 
 if __name__ == '__main__':
