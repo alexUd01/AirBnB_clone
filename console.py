@@ -27,6 +27,7 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, line):
         """Exits the program cleanly (^D / CTRL + D).
         """
+        print()
         return True
 
     def do_quit(self, line):
