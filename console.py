@@ -172,10 +172,13 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """Prints all string representation of all instances based
         or not on the class name.
-            Ex: $ all BaseModel
+           Ex: $ all BaseModel
                 <some data about BaseModel is printed>
-                $ all.
-                <some data about BaseModel is printed>
+                $ all User
+                <some data about User is printed>
+
+                $ all
+                <some data about all instances is printed>
 
         The printed result must be a list of strings (like the
         example below). If the class name doesn't exist, print
@@ -300,6 +303,146 @@ email "aibnb@mail.com")
         # Update object
         storage.update(args[2], val, args[0], args[1])
         storage.save()
+
+    def __count(self, class_name):
+        """A private instance method that returns the number of objects
+        currenttly available.
+        """
+        count = 0
+
+        for key in self.all_object.keys():
+            if key.startswith(class_name + '.'):
+                count += 1
+
+        return count
+
+    def default(self, line):
+        """A public instance method that manages extra commands that cannot
+        be parsed useng def do_cmdname()
+        Ex:
+            (hbnb) User.all()
+            <output_here>
+        """
+        current_classes = ["BaseModel", "User", "Place", "State",
+                           "City", "Amenity", "Review"]
+        current_commands = ["all", "count", "show", "destroy, update"]
+
+        # Retrieve previously stored data
+        self.all_object = storage.all()
+
+        lst = line.split('.')
+        class_name = lst[0]
+        if len(lst) < 2:  # Check if only class_name was entered
+            super().default(line)  # Ex: (hbnb) User
+            return                 #     Unknown syntax: User
+        cmd_name = lst[1]
+
+        if class_name not in current_classes:
+            print("** class doesn't exist **")
+            return
+        for temp in current_commands:
+            if cmd_name == temp + '()':
+                if temp == "all":
+                    self.do_all(class_name)
+                    return
+                if temp == "count":
+                    x = self.__count(class_name)
+                    print(x)
+                    return
+        if cmd_name.startswith("show("):
+            try:  #Read id_num up to ending bracket `)` not including it
+                id_num = cmd_name[5:cmd_name.index(')')]
+            except ValueError:
+                super().default(line)
+            else:
+                # remove leading and trailling `"` or `'`
+                if id_num.startswith('"') and id_num.endswith('"'):
+                    id_num = id_num.strip('"')
+                elif id_num.startswith("'") and id_num.endswith("'"):
+                    id_num = id_num.strip("'")
+                else:
+                    super().default(line)
+                    return
+
+                # Recreate a new string to be passed to `do_show`
+                new_line = class_name + ' ' + id_num
+                self.do_show(new_line)
+
+        elif cmd_name.startswith("destroy("):
+            try:  #Read id_num up to ending bracket `)` not including it
+                id_num = cmd_name[8:cmd_name.index(')')]
+            except ValueError:
+                super().default(line)
+            else:
+                # remove leading and trailling `"` or `'`
+                id_num = self.__my_strip(id_num)
+                if id_num == -1000:
+                    super().default(line)
+                    return
+
+                # Recreate a new string to be passed to `do_destroy`
+                new_line = class_name + ' ' + id_num
+                self.do_destroy(new_line)
+
+        elif cmd_name.startswith("update("):
+            try:  #Read args up to ending bracket `)` not including it
+                words = cmd_name[7:cmd_name.index(')')]
+
+                # Read id like '"asfadfadfadsadfad", without the `,`
+                first_comma_index = words.index(',')
+                id_num = words[:first_comma_index].strip()
+
+                # Read attr_name starting after the first `,`
+                second_comma_index = words.index(',', first_comma_index + 1)
+                attr_name = words[first_comma_index + 1:
+                                  second_comma_index].strip()
+
+                # Read attr_val starting after the second `,`
+                attr_val = ''
+                try:  # --> Incase more useless args were passed
+                    third_comma_index = words.index(',', second_comma_index + 1)
+                    attr_val = words[second_comma_index + 1:
+                                     third_comma_index].strip()
+                except ValueError:
+                    attr_val = words[second_comma_index + 1:].strip()
+
+            except ValueError as e:
+                super().default(line)
+            else:
+                # remove leading and trailling `"` or `'` from id_num
+                id_num = self.__my_strip(id_num)
+                if id_num == -1000:
+                    super().default(line)
+                    return
+
+                # remove leading and trailing `"` or `'` from attr_name
+                attr_name = self.__my_strip(attr_name)
+                if attr_name == -1000:
+                    super().default(line)
+                    return
+
+                # remove leading and trailling `"` or `'` from attr_val
+                attr_val = self.__my_strip(attr_val)
+                if attr_val == -1000:
+                    super().default(line)
+                    return
+
+                # recreate a new string to be passed to `do_update`
+                new_line = class_name + ' ' + id_num + ' ' \
+                    + attr_name + ' ' + attr_val
+                self.do_update(new_line)
+        else:
+            super().default(line)
+
+    def __my_strip(self, string):
+        if string.startswith('"') and string.endswith('"'):
+            string = string.strip('"')
+        elif string.startswith("'") and string.endswith("'"):
+            string = string.strip("'")
+        else:
+            return -1000
+        return string
+            
 
 
 if __name__ == '__main__':

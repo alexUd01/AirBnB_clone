@@ -22,6 +22,7 @@ class FileStorage():
     __objects = dict()
 
     def __init__(self):
+        """Initializes some values that I haven't thought of"""
         pass
 
     def all(self):
