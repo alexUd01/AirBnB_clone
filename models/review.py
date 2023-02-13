@@ -7,7 +7,6 @@ Public class attribute:
     text: string - empty string
 """
 from models.base_model import BaseModel
-from models.__init__ import storage
 
 
 # Task 9
