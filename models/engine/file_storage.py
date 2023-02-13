@@ -19,7 +19,7 @@ class FileStorage():
     # objects: A dictionary - that but will store all objects by:
     # <class name>.id (ex: to store a BaseModel object with id=12121212,
     # the key will be BaseModel.12121212)
-    __objects = dict()
+    __objects = {}
 
 
     def all(self):
@@ -37,7 +37,7 @@ class FileStorage():
                 new_dict[key] = "[{}] ({}) {}".format(tmp_list[0],
                                                       tmp_list[1],
                                                       temp[key])
-        return new_dict
+        return FileStorage.__objects()
 
     def new(self, obj):
         """Sets in __objects the obj with key <obj class name>.id
