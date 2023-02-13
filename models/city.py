@@ -15,7 +15,3 @@ class City(BaseModel):
     """
     state_id = ''
     name = ''
-
-    def __init__(self):
-        """Initialization is passed to BaseModel."""
-        super().__init__(self)

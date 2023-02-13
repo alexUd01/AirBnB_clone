@@ -17,7 +17,3 @@ class Review(BaseModel):
     place_id = ''
     user_id = ''
     text = ''
-
-    def __init__(self):
-        """Initialization is passed to BaseModel."""
-        super().__init__(self)

@@ -19,7 +19,3 @@ class User(BaseModel):
     password = ''
     first_name = ''
     last_name = ''
-
-    def __init__(self):
-        """Initialization is passed to BaseModel."""
-        super().__init__(self)

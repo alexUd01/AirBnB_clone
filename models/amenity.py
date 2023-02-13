@@ -13,7 +13,3 @@ class Amenity(BaseModel):
     """A class Amenity that inherits from BaseModel
     """
     name = ''
-
-    def __init__(self):
-        """Initialization is passed to BaseModel."""
-        super().__init__(self)

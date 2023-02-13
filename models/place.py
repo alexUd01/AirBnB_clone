@@ -34,7 +34,3 @@ class Place(BaseModel):
     latitude = 0.0
     longitude = 0.0
     amenity_ids = list()
-
-    def __init__(self):
-        """Initialization is passed to BaseModel."""
-        super().__init__(self)
