@@ -26,18 +26,18 @@ class FileStorage():
         """Returns the dictionary __objects
         """
         # Retrieve previously saved data
-        type(self).reload(self)
+        self.reload()
 
         new_dict = dict()
 
-        temp = type(self).__objects
+        temp = FileStorage.__objects
         if len(temp) > 0:
             for key in temp.keys():
                 tmp_list = key.split('.')
                 new_dict[key] = "[{}] ({}) {}".format(tmp_list[0],
                                                       tmp_list[1],
                                                       temp[key])
-        return FileStorage.__objects()
+        return new_dict
 
     def new(self, obj):
         """Sets in __objects the obj with key <obj class name>.id
@@ -52,19 +52,19 @@ class FileStorage():
         new_key = obj_class_name + "." + obj_id
 
         # Update dictionary `__objects`
-        type(self).__objects[new_key] = obj.__dict__
+        FileStorage.__objects[new_key] = obj.__dict__
 
     def save(self):
         """Serializes __objects to the JSON file (path: __file_path)
         """
-        FILE_PATH = type(self).__file_path
+        FILE_PATH = FileStorage.__file_path
 
         # temporary dictionary
-        new_dict = self.__objects.copy()
+        new_dict = FileStorage.__objects.copy()
 
         if len(new_dict) != 0:  # __objects isn't empty
             for key in new_dict.keys():
-                new_dict[key] = type(self).to_dict(new_dict[key])
+                new_dict[key] = FileStorage.to_dict(new_dict[key])
                 tmp_list = key.split(sep='.')
                 new_dict[key]["__class__"] = tmp_list[0]
 
@@ -77,7 +77,7 @@ class FileStorage():
         file (__file_path) exists ; otherwise, do nothing. If the
         file doesn't exist, no exception should be raised)
         """
-        FILE_PATH = type(self).__file_path
+        FILE_PATH = FileStorage.__file_path
 
         try:
             with open(FILE_PATH, encoding="utf-8") as fhand:
@@ -87,9 +87,9 @@ class FileStorage():
         else:
             new_dict = dict()
             for key in temp.keys():
-                new_dict[key] = type(self).from_dict(temp[key])
+                new_dict[key] = FileStorage.from_dict(temp[key])
 
-            type(self).__objects = new_dict
+            FileStorage.__objects = new_dict
 
     @staticmethod
     def to_dict(obj):
@@ -124,9 +124,9 @@ class FileStorage():
         """A function that deletes an instance based on its
         class name and id
         """
-        for key in type(self).__objects.keys():
+        for key in FileStorage.__objects.keys():
             if key == class_name + '.' + obj_id:
-                del type(self).__objects[key]
+                del FileStorage.__objects[key]
                 self.save()
                 return
 
@@ -136,7 +136,7 @@ class FileStorage():
 
     def validate_id(self, class_name, obj_id):
         """Check if a valid object id was provided"""
-        if class_name + '.' + obj_id not in type(self).__objects.keys():
+        if class_name + '.' + obj_id not in FileStorage.__objects.keys():
             return False
         return True
 
@@ -148,8 +148,8 @@ class FileStorage():
             val = int(val)
         except Exception:
             pass
-        for key in type(self).__objects.keys():
+        for key in FileStorage.__objects.keys():
             if key == class_name + '.' + obj_id:
-                type(self).__objects[key][attr] = val
-                type(self).__objects[key]['updated_at'] = datetime.now()
+                FileStorage.__objects[key][attr] = val
+                FileStorage.__objects[key]['updated_at'] = datetime.now()
                 self.save()
