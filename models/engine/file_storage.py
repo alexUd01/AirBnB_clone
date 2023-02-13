@@ -21,7 +21,6 @@ class FileStorage():
     # the key will be BaseModel.12121212)
     __objects = {}
 
-
     def all(self):
         """Returns the dictionary __objects
         """
