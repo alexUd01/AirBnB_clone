@@ -303,7 +303,6 @@ email "aibnb@mail.com")
 
         # Update object
         storage.update(args[2], val, args[0], args[1])
-        storage.save()
 
     def __count(self, class_name):
         """A private instance method that returns the number of objects
@@ -395,7 +394,11 @@ email "aibnb@mail.com")
                 return
 
             # Get id number
-            first_comma_idx = words.index(',')
+            try:
+                first_comma_idx = words.index(',')
+            except ValueError:
+                super().default(line)
+                return
             id_num = words[:first_comma_idx].strip()
             id_num = self.__my_strip(id_num)
             if id_num == -1000:
@@ -413,10 +416,15 @@ email "aibnb@mail.com")
                 attr_dict = attr_dict.replace("'", '"')
                 new_dict = json.loads(attr_dict)
 
+                # using a loop to update different attr/values of same id_num
+                storage.new_obj = None
                 for attr_name, attr_val in new_dict.items():
                     new_line = class_name + ' ' + id_num + ' ' \
                         + attr_name + ' ' + str(attr_val)
                     self.do_update(new_line)
+
+                # clear new_obj for reusage
+                storage.new_obj = None
                 return
 
             # If **kwargs works, this point will never be reached
