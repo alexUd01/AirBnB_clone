@@ -24,34 +24,34 @@ class FileStorage():
     def all(self):
         """Returns the dictionary __objects
         """
-        # Retrieve previously saved data
-        self.reload()
-
-        new_dict = dict()
-
-        temp = FileStorage.__objects
-        if len(temp) > 0:
-            for key in temp.keys():
-                tmp_list = key.split('.')
-                new_dict[key] = "[{}] ({}) {}".format(tmp_list[0],
-                                                      tmp_list[1],
-                                                      temp[key])
-        return new_dict
+        return FileStorage.__objects
 
     def new(self, obj):
         """Sets in __objects the obj with key <obj class name>.id
         """
-        obj_class_name = type(obj).__name__
+        key = "{}.{}".format(type(obj).__name__, obj.id)
+        FileStorage.__objects[key] = obj
 
-        # If the attribute `id` is not set, this line below should
-        # raise AttributeError
-        obj_id = str(getattr(obj, "id"))
+    @staticmethod
+    def classes():
+        """Returns a dictionary of valid classes and their references"""
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.place import Place
+        from models.review import Review
 
-        # merge class name and id
-        new_key = obj_class_name + "." + obj_id
-
-        # Update dictionary `__objects`
-        FileStorage.__objects[new_key] = obj.__dict__
+        classes = {"BaseModel": BaseModel,
+                   "User": User,
+                   "State": State,
+                   "City": City,
+                   "Amenity": Amenity,
+                   "Place": Place,
+                   "Review": Review
+                   }
+        return classes
 
     def save(self):
         """Serializes __objects to the JSON file (path: __file_path)
@@ -61,11 +61,10 @@ class FileStorage():
         # temporary dictionary
         new_dict = FileStorage.__objects.copy()
 
-        if len(new_dict) != 0:  # __objects isn't empty
-            for key in new_dict.keys():
-                new_dict[key] = FileStorage.to_dict(new_dict[key])
-                tmp_list = key.split(sep='.')
-                new_dict[key]["__class__"] = tmp_list[0]
+        for key, val in new_dict.items():
+            tmp_list = key.split(sep='.')
+            new_dict[key] = val.to_dict()
+            new_dict[key]["__class__"] = tmp_list[0]
 
         # Write json string to file
         with open(FILE_PATH, mode="w", encoding="utf-8") as fhand:
@@ -84,40 +83,10 @@ class FileStorage():
         except FileNotFoundError:
             pass  # File does not exist - do nothing
         else:
-            new_dict = dict()
-            for key in temp.keys():
-                new_dict[key] = FileStorage.from_dict(temp[key])
+            new_dict = {k: self.classes()[v["__class__"]](**v)
+                        for k, v in temp.items()}
 
             FileStorage.__objects = new_dict
-
-    @staticmethod
-    def to_dict(obj):
-        """Serializes datetime objects to JSON
-        """
-        new_dict = obj.copy()
-
-        new_dict["created_at"] = new_dict["created_at"].strftime(
-            "%Y-%m-%dT%H:%M:%S.%f")
-        new_dict["updated_at"] = new_dict["updated_at"].strftime(
-            "%Y-%m-%dT%H:%M:%S.%f")
-
-        return new_dict
-
-    @staticmethod
-    def from_dict(obj):
-        """Deserializes JSON object to datetime object
-        """
-        new_dict = obj.copy()
-
-        new_dict["created_at"] = datetime.strptime(new_dict["created_at"],
-                                                   "%Y-%m-%dT%H:%M:%S.%f")
-        new_dict["updated_at"] = datetime.strptime(new_dict["updated_at"],
-                                                   "%Y-%m-%dT%H:%M:%S.%f")
-
-        if hasattr(new_dict, "__class__"):
-            del new_dict["__class__"]
-
-        return new_dict
 
     def destroy(self, class_name, obj_id):
         """A function that deletes an instance based on its
@@ -147,8 +116,27 @@ class FileStorage():
             val = int(val)
         except Exception:
             pass
+
         for key in FileStorage.__objects.keys():
             if key == class_name + '.' + obj_id:
-                FileStorage.__objects[key][attr] = val
-                FileStorage.__objects[key]['updated_at'] = datetime.now()
-                self.save()
+                # Only create new instance when there's no self.new_obj
+                if getattr(self, 'new_obj', -100) == -100 or \
+                   self.new_obj is None:
+                    self.new_obj = self.classes()[class_name]()
+                    setattr(self.new_obj, 'id', obj_id)
+
+                # then set attr/val
+                setattr(self.new_obj, attr, val)
+                # set `updated_at`/`created_at`
+                if not hasattr(self.new_obj, 'created_at'):
+                    setattr(self.new_obj, 'created_at', datetime.now())
+                    setattr(self.new_obj, 'updated_at', new_obj.created_at)
+                else:
+                    setattr(self.new_obj, 'updated_at', datetime.now())
+
+                # assign new_obj to matched value
+                FileStorage.__objects[key] = self.new_obj
+
+                # Save changes
+                FileStorage.save(self)
+                return
