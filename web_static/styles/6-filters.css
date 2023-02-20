@@ -34,7 +34,6 @@ section.filters div.amenities {
     display: inline-block;
     text-align: left;
     float: left;
-    padding: 0 45px;
 }
 
 section.filters div.amenities {
@@ -46,6 +45,7 @@ section.filters .amenities h3 {
     font-weight: 600;
     margin-top: 14px;
     margin-bottom: 3px;
+    padding-left: 45px;
 }
 
 section.filters .locations h4,
@@ -54,5 +54,32 @@ section.filters .amenities h4 {
     font-size: 14px;
     margin-top: 0;
     margin-bottom: 0;
+    padding-left: 45px;
 }
 
+/* 6. It's (h)over */
+
+div ul.popover {
+    display: none;
+    background-color: #FAFAFA;
+    width: 84%;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    margin-top: 18px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+div ul.popover,
+div ul.popover ul {
+    list-style-type: none;
+}
+
+.popover h2 {
+    font-size: 16px;
+}
+
+.locations:hover .popover,
+.amenities:hover .popover {
+    display: block;
+}
